@@ -1,0 +1,149 @@
+The State of Go
+Where we are in March 2018
+
+Bogdan Prodan
+Go Developer at Eleks
+
+bogdan.prodan@eleks.com
+
+* Chronology of Go
+
+Go 1.8 was released more than a year ago
+
+Go 1.9 is already 7 months old
+
+Go 1.10rc1 was released on January 25th
+
+Go 1.10 was released on February 16th
+
+.image img/gopher_flying.jpg 300 450
+
+* Agenda
+
+Changes since Go 1.9:
+
+- Language
+- Ports
+- Tools
+- Core Library
+- Performance
+- Community
+
+* Language
+**
+**
+**
+.image img/no-change.jpg
+
+* Ports
+**
+.image img/no_change.jpg
+
+* Tools
+- Environment
+- Build & Install
+- Test
+- Gofmt
+
+* Environment
+
+`GOPATH` became optional in Go 1.8.
+
+`GOROOT` is now optional too, deduced from the binary path.
+(go tool attempts to deduce `GOROOT` from its own executable path)
+
+A new variable `GOTMPDIR` was added to control where temporary files are created.
+
+* Build & Install
+
+- `go`install` now caches the result of compiled packages
+
+- `go`install` and `go`build` become *much* faster
+
+- `go`build`-i` or `go`build`-a` or `go`test`-a` are no longer necessary
+
+* Test
+
+*go* *test* command now caches test results (use `-count=1`  to disable)
+
+    ➜  go test strings
+    ok  	strings	(cached)
+
+Runs *go* *vet* on the package being tested (use `go`test`-vet=off` to disable)
+
+Ability of *-coverpkg* compute coverage of multiple packages
+
+    ➜  go test -coverpkg=all -coverprofile cover.out ./...
+
+New *-failfast* and *-json* flags
+
+* Gofmt
+
+Small change in formatting of three-index slicing expressions.
+
+Before:
+
+    a[i : j:k]
+
+Now:
+
+    a[i : j : k]
+
+* Core Library
+
+No new packages with Go 1.10. All of the changes to the standard library are minor.
+
+* Changes to bytes
+
+The `Fields`, `FieldsFunc`, `Split`, and `SplitAfter` change each returned subslice to have capacity equal to its length, so that appending to one cannot overwrite adjacent data in the original input.
+
+.play examples/bytes.go /START/,/END/
+.caption [[https://play.golang.org/p/Bj-sUd5ihTP][playground 1.10]]
+
+* Changes to json
+
+The Decoder adds a new method _DisallowUnknownFields_ that causes it to report inputs with unknown JSON fields as a decoding error.
+
+The default behavior has always been to discard unknown fields.
+
+* Changes to flags
+
+Added appropriate indentation after newlines in flag usage strings, so that multi-line usage strings display nicely.
+
+.play examples/flags.go /START/,/END/
+
+.caption [[https://play.golang.org/p/SVyB5D1YkmF][playground 1.10]]
+
+* Strings
+
+A new type `Builder` is a replacement for `bytes.Buffer` for the use case of accumulating text into a string result
+
+.play examples/strings.go /START/,/END/
+.caption [[https://play.golang.org/p/mzDhi8tkQeR][playground 1.10]]
+
+* Performance
+
+As always, the changes are so general and varied that precise statements about performance are difficult to make.
+Most programs should run a bit faster, due to speedups in the garbage collector, better generated code, and optimizations in the core library.
+
+* Release notes
+
+If you want to read complete information on things that have changed please visit [[https://golang.org/doc/go1.10]]
+
+* Community - Upcoming Conferences
+
+- GopherCon India 2018, Pune, India [[http://www.gophercon.in]]
+- GopherCon Russia 2018, Moscow, Russia, [[http://gophercon-russia.ru]]
+- GothamGo 2018, New York, USA, [[http://gothamgo.com]]
+- GopherCon SG 2018, Singapore, [[https://2018.gophercon.sg]]
+- GopherCon Europe, Reykjavik, Iceland, [[https://gophercon.is]]
+- GopherCon Denver 2018, Denver, CO, [[http://gophercon.com]]
+- GopherCon Brasil 2018, Florianópolis, Brazil, [[https://2018.gopherconbr.org/en]]
+- GoLab 2018, Florence, Italy, [[http://golab.io]]
+- dotGo 2019, Paris, France, [[https://2019.dotgo.eu]]
+
+[[https://github.com/golang/go/wiki/Conferences][List of all Go conferences]]
+
+
+* End!
+.image img/mic.png 500 _
