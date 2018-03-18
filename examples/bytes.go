@@ -23,3 +23,7 @@ func main() {
 	fmt.Printf("[1]: %s", desc(xyz[1]))
 	// END OMIT
 }
+
+func desc(b []byte) string {
+	return fmt.Sprintf("len: %2d | cap: %2d | %q\n", len(b), cap(b), b)
+}
