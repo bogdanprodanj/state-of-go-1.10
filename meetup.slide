@@ -56,15 +56,15 @@ A new variable `GOTMPDIR` was added to control where temporary files are created
 
 * Build & Install
 
-- `go`install` now caches the result of compiled packages
+- *go* *build* now maintains a caches of recently built packages separately from packages in *pkg*
 
-- `go`install` and `go`build` become *much* faster
+- `-a` and `-i` are no longer necessary
 
-- `go`build`-i` or `go`build`-a` or `go`test`-a` are no longer necessary
+- thus *go* *build* become *much* faster
 
 * Test
 
-*go* *test* command now caches test results (use `-count=1`  to disable)
+*go* *test* command also now caches test results (use `-count=1`  to disable)
 
     ➜  go test strings
     ok  	strings	(cached)
@@ -76,6 +76,18 @@ Ability of *-coverpkg* compute coverage of multiple packages
     ➜  go test -coverpkg=all -coverprofile cover.out ./...
 
 New *-failfast* and *-json* flags
+
+* Three-Index Slicing
+
+Did you know you can use three values for slicing?
+
+.play examples/slices.go /START/,/END/
+
+* Three-Index Slicing (cont.)
+
+You can control the capacity of the resulting slice.
+
+.play examples/slices2.go /START/,/END/
 
 * Gofmt
 
@@ -98,7 +110,7 @@ No new packages with Go 1.10. All of the changes to the standard library are min
 The `Fields`, `FieldsFunc`, `Split`, and `SplitAfter` change each returned subslice to have capacity equal to its length, so that appending to one cannot overwrite adjacent data in the original input.
 
 .play examples/bytes.go /START/,/END/
-.caption [[https://play.golang.org/p/Bj-sUd5ihTP][playground 1.10]]
+.caption [[https://play.golang.org/p/IkrcKWBP_Vd][playground 1.10]]
 
 * Changes to json
 
@@ -116,24 +128,78 @@ Added appropriate indentation after newlines in flag usage strings, so that mult
 
 * Strings
 
-A new type `Builder` is a replacement for `bytes.Buffer` for the use case of accumulating text into a string result
+A new type Builder is a replacement for bytes.Buffer for the use case of accumulating text into a string result.
+The Builder's API is a restricted subset of bytes.Buffer's that allows it to safely avoid making a duplicate copy of the data during the String method.
 
 .play examples/strings.go /START/,/END/
-.caption [[https://play.golang.org/p/mzDhi8tkQeR][playground 1.10]]
+
+* Strings benchmarks
+
+.play examples/a_test.go /START1/,/END1/
+
+* Strings benchmarks (cont)
+
+.play examples/a_test.go /START2/,/END2/
+.caption [[https://play.golang.org/p/BD07U-qdKNT][playground 1.10]]
+
+* Strings benchmarks (cont 2)
+
+.play examples/a_test.go /START3/,/END3/
+    func BenchmarkConcat2(b *testing.B)             { benchmark(2, Concat, b) }
+    func BenchmarkConcat100(b *testing.B)           { benchmark(100, Concat, b) }
+    func BenchmarkConcat100000(b *testing.B)        { benchmark(100000, Concat, b) }
+
+    func BenchmarkBuffer2(b *testing.B)             { benchmark(2, Buffer, b) }
+    ...
+
+    func BenchmarkCopy2(b *testing.B)               { benchmark(2, Copy, b) }
+    ...
+
+    func BenchmarkBuilder2(b *testing.B)            { benchmark(2, StringBuilder, b) }
+    ...
+
+* Strings benchmarks output
+
+    BenchmarkConcat2-4         	30000000	        46.7 ns/op	       8 B/op	       1 allocs/op
+    BenchmarkConcat100-4       	  200000	     12051 ns/op	   21096 B/op	      99 allocs/op
+    BenchmarkConcat100000-4    	       1	4210300196 ns/op	20384408176 B/op	  100011 allocs/op
+    BenchmarkBuffer2-4         	20000000	        89.4 ns/op	     120 B/op	       2 allocs/op
+    BenchmarkBuffer100-4       	 1000000	      1419 ns/op	    1536 B/op	       5 allocs/op
+    BenchmarkBuffer100000-4    	    2000	    951513 ns/op	 1528288 B/op	      15 allocs/op
+    BenchmarkCopy2-4           	30000000	        43.6 ns/op	      16 B/op	       2 allocs/op
+    BenchmarkCopy100-4         	 3000000	       598 ns/op	     832 B/op	       2 allocs/op
+    BenchmarkCopy100000-4      	    3000	    464300 ns/op	  802816 B/op	       2 allocs/op
+    BenchmarkBuilder2-4        	30000000	        42.4 ns/op	       8 B/op	       1 allocs/op
+    BenchmarkBuilder100-4      	 1000000	      1313 ns/op	    1016 B/op	       7 allocs/op
+    BenchmarkBuilder100000-4   	    1000	   1683545 ns/op	 2299899 B/op	      31 allocs/op
 
 * Performance
 
 As always, the changes are so general and varied that precise statements about performance are difficult to make.
 Most programs should run a bit faster, due to speedups in the garbage collector, better generated code, and optimizations in the core library.
 
+* Garbage Collector Performance
+
+* go 1.9 (beta 1)
+
+.image img/gct6.png _ 800
+
+* go 1.10
+
+.image img/gct7.png _ 550
+.image img/gct7tweet.png _ 500
+
 * Release notes
 
 If you want to read complete information on things that have changed please visit [[https://golang.org/doc/go1.10]]
 
+Presentation source code
+
+
+
 * Community - Upcoming Conferences
 
-- GopherCon India 2018, Pune, India [[http://www.gophercon.in]]
-- GopherCon Russia 2018, Moscow, Russia, [[http://gophercon-russia.ru]]
+- GopherCon 2018, Shanghai, China, [[http://www.gopherchina.org]]
 - GothamGo 2018, New York, USA, [[http://gothamgo.com]]
 - GopherCon SG 2018, Singapore, [[https://2018.gophercon.sg]]
 - GopherCon Europe, Reykjavik, Iceland, [[https://gophercon.is]]

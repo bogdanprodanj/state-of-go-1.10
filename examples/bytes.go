@@ -7,20 +7,19 @@ import (
 
 func main() {
 	// START OMIT
-	slice1 := []byte("Hello Lviv!")
-	fmt.Printf("slice1: %s", desc(slice1))
+	abc := []byte("Hello World")
+	fmt.Printf("abc: %s", desc(abc))
 
-	// Fields splits the slice2 around each instance of one or more consecutive white space
-	// characters, returning a slice of subslices of slice2 or
-	// an empty list if s contains only white space.
-	slice2 := bytes.Fields(slice1)[0]
-	fmt.Printf("slice2: %s", desc(slice2))
+	xyz := bytes.Fields(abc)
+	fmt.Println("Before change")
+	fmt.Printf("[0]: %s", desc(xyz[0]))
+	fmt.Printf("[1]: %s", desc(xyz[1]))
 
-	slice2 = append(slice2, '#')
-	fmt.Printf("slice2: %s", desc(slice2))
+	xyz[0] = append(xyz[0], byte('X'))
+	xyz[0] = append(xyz[0], byte('Y'))
+	xyz[0] = append(xyz[0], byte('Z'))
+	fmt.Println("After change")
+	fmt.Printf("[0]: %s", desc(xyz[0]))
+	fmt.Printf("[1]: %s", desc(xyz[1]))
 	// END OMIT
-}
-
-func desc(b []byte) string {
-	return fmt.Sprintf("len: %2d | cap: %2d | %q\n", len(b), cap(b), b)
 }
