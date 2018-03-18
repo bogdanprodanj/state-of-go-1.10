@@ -193,9 +193,8 @@ Most programs should run a bit faster, due to speedups in the garbage collector,
 
 If you want to read complete information on things that have changed please visit [[https://golang.org/doc/go1.10]]
 
-Presentation source code
-
-
+Sources
+[[https://github.com/bogdanprodanj/state-of-go-1.10]]
 
 * Community - Upcoming Conferences
 
