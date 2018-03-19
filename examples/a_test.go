@@ -8,21 +8,26 @@ import (
 	"testing"
 )
 
+const (
+	testString = "test"
+	size       = 100
+)
+
 func main() {
-	fmt.Println("Concat")
+	fmt.Print("Concat:        ")
 	AllocationsConcat()
-	fmt.Println("Buffer")
+	fmt.Print("BytesBuffer:   ")
 	AllocationsBuffer()
-	fmt.Println("Copy")
-	AllocationsCopy()
-	fmt.Println("StringBuilder")
+	fmt.Print("StringBuilder: ")
 	AllocationsBuilder()
+	fmt.Print("Copy:          ")
+	AllocationsCopy()
 }
 
 func AllocationsConcat() {
 	var start runtime.MemStats
 	runtime.ReadMemStats(&start)
-	fmt.Println(Concat(testString, 10))
+	Concat(testString, size)
 	var end runtime.MemStats
 	runtime.ReadMemStats(&end)
 	fmt.Printf("there are %d allocated bytes\n", end.Alloc-start.Alloc)
@@ -30,7 +35,7 @@ func AllocationsConcat() {
 func AllocationsBuffer() {
 	var start runtime.MemStats
 	runtime.ReadMemStats(&start)
-	fmt.Println(Buffer(testString, 10))
+	Buffer(testString, size)
 	var end runtime.MemStats
 	runtime.ReadMemStats(&end)
 	fmt.Printf("there are %d allocated bytes\n", end.Alloc-start.Alloc)
@@ -38,7 +43,7 @@ func AllocationsBuffer() {
 func AllocationsCopy() {
 	var start runtime.MemStats
 	runtime.ReadMemStats(&start)
-	fmt.Println(Copy(testString, 10))
+	Copy(testString, 10)
 	var end runtime.MemStats
 	runtime.ReadMemStats(&end)
 	fmt.Printf("there are %d allocated bytes\n", end.Alloc-start.Alloc)
@@ -47,13 +52,12 @@ func AllocationsCopy() {
 func AllocationsBuilder() {
 	var start runtime.MemStats
 	runtime.ReadMemStats(&start)
-	fmt.Println(StringBuilder(testString, 10))
+	StringBuilder(testString, size)
 	var end runtime.MemStats
 	runtime.ReadMemStats(&end)
 	fmt.Printf("there are %d allocated bytes\n", end.Alloc-start.Alloc)
 }
 
-// START1 OMIT
 func Concat(input string, size int) string {
 	var str string
 	for n := 0; n < size; n++ {
@@ -70,9 +74,6 @@ func Buffer(input string, size int) string {
 	return buffer.String()
 }
 
-// END1 OMIT
-
-// START2 OMIT
 func Copy(input string, size int) string {
 	bs := make([]byte, size*len(input))
 	length := 0
@@ -90,18 +91,11 @@ func StringBuilder(input string, size int) string {
 	return strBuilder.String()
 }
 
-// END2 OMIT
-
-const testString = "test"
-
-// START3 OMIT
 func benchmark(size int, testFunc func(string, int) string, b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		testFunc("test", size)
+		testFunc(testString, size)
 	}
 }
-
-// END3 OMIT
 
 func BenchmarkConcat2(b *testing.B)       { benchmark(2, Concat, b) }
 func BenchmarkConcat100(b *testing.B)     { benchmark(100, Concat, b) }

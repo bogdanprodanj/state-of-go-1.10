@@ -135,16 +135,52 @@ The Builder's API is a restricted subset of bytes.Buffer's that allows it to saf
 
 * Strings benchmarks
 
-.play examples/a_test.go /START1/,/END1/
+    func Concat(input string, size int) string {
+        var str string
+        for n := 0; n < size; n++ {
+            str += input
+        }
+        return str
+    }
+
+    func Buffer(input string, size int) string {
+        var buffer bytes.Buffer
+        for n := 0; n < size; n++ {
+            buffer.WriteString(input)
+        }
+        return buffer.String()
+    }
 
 * Strings benchmarks (cont)
 
-.play examples/a_test.go /START2/,/END2/
-.caption [[https://play.golang.org/p/BD07U-qdKNT][playground 1.10]]
+    func Copy(input string, size int) string {
+        bs := make([]byte, size*len(input))
+        length := 0
+        for n := 0; n < size; n++ {
+            length += copy(bs[length:], input)
+        }
+        return string(bs)
+    }
+
+    func StringBuilder(input string, size int) string {
+        var strBuilder strings.Builder
+        for n := 0; n < size; n++ {
+            strBuilder.WriteString(input)
+        }
+        return strBuilder.String()
+    }
+.caption [[https://play.golang.org/p/Ql862xykJDf][playground 1.10]]
 
 * Strings benchmarks (cont 2)
 
-.play examples/a_test.go /START3/,/END3/
+    func benchmark(size int, testFunc func(string, int) string, b *testing.B) {
+        for n := 0; n < b.N; n++ {
+            testFunc("test", size)
+        }
+    }
+
+Benchmark functions:
+
     func BenchmarkConcat2(b *testing.B)             { benchmark(2, Concat, b) }
     func BenchmarkConcat100(b *testing.B)           { benchmark(100, Concat, b) }
     func BenchmarkConcat100000(b *testing.B)        { benchmark(100000, Concat, b) }
