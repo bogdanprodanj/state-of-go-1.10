@@ -10,16 +10,16 @@ import (
 
 func main() {
 	fmt.Println("Concat")
-	a1()
+	AllocationsConcat()
 	fmt.Println("Buffer")
-	a2()
+	AllocationsBuffer()
 	fmt.Println("Copy")
-	a3()
+	AllocationsCopy()
 	fmt.Println("StringBuilder")
-	a4()
+	AllocationsBuilder()
 }
 
-func a1() {
+func AllocationsConcat() {
 	var start runtime.MemStats
 	runtime.ReadMemStats(&start)
 	fmt.Println(Concat(testString, 10))
@@ -27,7 +27,7 @@ func a1() {
 	runtime.ReadMemStats(&end)
 	fmt.Printf("there are %d allocated bytes\n", end.Alloc-start.Alloc)
 }
-func a2() {
+func AllocationsBuffer() {
 	var start runtime.MemStats
 	runtime.ReadMemStats(&start)
 	fmt.Println(Buffer(testString, 10))
@@ -35,7 +35,7 @@ func a2() {
 	runtime.ReadMemStats(&end)
 	fmt.Printf("there are %d allocated bytes\n", end.Alloc-start.Alloc)
 }
-func a3() {
+func AllocationsCopy() {
 	var start runtime.MemStats
 	runtime.ReadMemStats(&start)
 	fmt.Println(Copy(testString, 10))
@@ -44,7 +44,7 @@ func a3() {
 	fmt.Printf("there are %d allocated bytes\n", end.Alloc-start.Alloc)
 }
 
-func a4() {
+func AllocationsBuilder() {
 	var start runtime.MemStats
 	runtime.ReadMemStats(&start)
 	fmt.Println(StringBuilder(testString, 10))

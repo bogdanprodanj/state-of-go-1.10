@@ -11,6 +11,8 @@ func main() {
 	fmt.Printf("hello: %s", desc(hello))
 
 	hello = append(hello, '#')
+	hello = append(hello, '#')
+	hello = append(hello, '#')
 	fmt.Printf("hello: %s", desc(hello))
 
 	fmt.Printf("text:  %s", desc(text))
