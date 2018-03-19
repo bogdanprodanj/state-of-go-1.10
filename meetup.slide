@@ -132,6 +132,7 @@ A new type Builder is a replacement for bytes.Buffer for the use case of accumul
 The Builder's API is a restricted subset of bytes.Buffer's that allows it to safely avoid making a duplicate copy of the data during the String method.
 
 .play examples/strings.go /START/,/END/
+.caption [[https://play.golang.org/p/laplGq7fblQ][playground 1.10]]
 
 * Strings benchmarks
 
