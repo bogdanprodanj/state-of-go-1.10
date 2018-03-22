@@ -134,7 +134,7 @@ The Builder's API is a restricted subset of bytes.Buffer's that allows it to saf
 .play examples/strings.go /START/,/END/
 .caption [[https://play.golang.org/p/laplGq7fblQ][playground 1.10]]
 
-* Strings benchmarks
+* Strings benchmarks (Part 1)
 
     func Concat(input string, size int) string {
         var str string
@@ -144,23 +144,40 @@ The Builder's API is a restricted subset of bytes.Buffer's that allows it to saf
         return str
     }
 
+    func Append(input string, size int) string {
+    	var data []byte
+    	for n := 0; n < size; n++ {
+    		data = append(data, input...)
+    	}
+    	return string(data)
+    }
+
+* Strings benchmarks (Part 2)
+
+    func Copy(input string, size int) string {
+    	data := make([]byte, 0, 64)
+    	var off int
+    	for n := 0; n < size; n++ {
+    		off = len(data)
+    		if off+len(input) > cap(data) {
+    			temp := make([]byte, 2*cap(data)+len(input))
+    			copy(temp, data)
+    			data = temp
+    		}
+    		data = data[0 : off+len(input)]
+    		copy(data[off:], input)
+    	}
+    	return string(data)
+    }
+
+* Strings benchmarks (Part 3)
+
     func Buffer(input string, size int) string {
         var buffer bytes.Buffer
         for n := 0; n < size; n++ {
             buffer.WriteString(input)
         }
         return buffer.String()
-    }
-
-* Strings benchmarks (cont)
-
-    func Copy(input string, size int) string {
-        bs := make([]byte, size*len(input))
-        length := 0
-        for n := 0; n < size; n++ {
-            length += copy(bs[length:], input)
-        }
-        return string(bs)
     }
 
     func StringBuilder(input string, size int) string {
@@ -170,9 +187,8 @@ The Builder's API is a restricted subset of bytes.Buffer's that allows it to saf
         }
         return strBuilder.String()
     }
-.caption [[https://play.golang.org/p/Ql862xykJDf][playground 1.10]]
 
-* Strings benchmarks (cont 2)
+* Strings benchmarks (Part 4)
 
     func benchmark(size int, testFunc func(string, int) string, b *testing.B) {
         for n := 0; n < b.N; n++ {
@@ -189,26 +205,25 @@ Benchmark functions:
     func BenchmarkBuffer2(b *testing.B)             { benchmark(2, Buffer, b) }
     ...
 
-    func BenchmarkCopy2(b *testing.B)               { benchmark(2, Copy, b) }
-    ...
+* Strings benchmarks (Part 5)
 
-    func BenchmarkBuilder2(b *testing.B)            { benchmark(2, StringBuilder, b) }
-    ...
+    BenchmarkConcat2-4         	30000000	        47.4 ns/op	       8 B/op	       1 allocs/op
+    BenchmarkAppend2-4         	30000000	        48.5 ns/op	      16 B/op	       2 allocs/op
+    BenchmarkCopy2-4           	50000000	        28.9 ns/op	       8 B/op	       1 allocs/op
+    BenchmarkBuffer2-4         	20000000	        92.1 ns/op	     120 B/op	       2 allocs/op
+    BenchmarkBuilder2-4        	30000000	        42.2 ns/op	       8 B/op	       1 allocs/op
 
-* Strings benchmarks output
+    BenchmarkConcat100-4       	  100000	     11025 ns/op	   21096 B/op	      99 allocs/op
+    BenchmarkAppend100-4       	 2000000	       923 ns/op	    1432 B/op	       8 allocs/op
+    BenchmarkCopy100-4         	 2000000	       825 ns/op	    1424 B/op	       4 allocs/op
+    BenchmarkBuffer100-4       	 1000000	      1407 ns/op	    1536 B/op	       5 allocs/op
+    BenchmarkBuilder100-4      	 1000000	      1305 ns/op	    1016 B/op	       7 allocs/op
 
-    BenchmarkConcat2-4         	30000000	        46.7 ns/op	       8 B/op	       1 allocs/op
-    BenchmarkConcat100-4       	  200000	     12051 ns/op	   21096 B/op	      99 allocs/op
-    BenchmarkConcat100000-4    	       1	4210300196 ns/op	20384408176 B/op	  100011 allocs/op
-    BenchmarkBuffer2-4         	20000000	        89.4 ns/op	     120 B/op	       2 allocs/op
-    BenchmarkBuffer100-4       	 1000000	      1419 ns/op	    1536 B/op	       5 allocs/op
-    BenchmarkBuffer100000-4    	    2000	    951513 ns/op	 1528288 B/op	      15 allocs/op
-    BenchmarkCopy2-4           	30000000	        43.6 ns/op	      16 B/op	       2 allocs/op
-    BenchmarkCopy100-4         	 3000000	       598 ns/op	     832 B/op	       2 allocs/op
-    BenchmarkCopy100000-4      	    3000	    464300 ns/op	  802816 B/op	       2 allocs/op
-    BenchmarkBuilder2-4        	30000000	        42.4 ns/op	       8 B/op	       1 allocs/op
-    BenchmarkBuilder100-4      	 1000000	      1313 ns/op	    1016 B/op	       7 allocs/op
-    BenchmarkBuilder100000-4   	    1000	   1683545 ns/op	 2299899 B/op	      31 allocs/op
+    BenchmarkConcat100000-4    	       1	3822758565 ns/op	20384407600 B/op	  100005 allocs/op
+    BenchmarkAppend100000-4    	    2000	    896700 ns/op	 2701307 B/op	      32 allocs/op
+    BenchmarkCopy100000-4      	    2000	    651084 ns/op	 1528176 B/op	      14 allocs/op
+    BenchmarkBuffer100000-4    	    2000	    954523 ns/op	 1528288 B/op	      15 allocs/op
+    BenchmarkBuilder100000-4   	    1000	   1443554 ns/op	 2299899 B/op	      31 allocs/op
 
 * Performance
 
